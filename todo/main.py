@@ -16,8 +16,13 @@ async def read_root():
 class Status(BaseModel):
     message: str
 
-class Status(BaseModel):
-    message: str
+@app.get("/todos", response_model=list[Todo_Pydantic])
+async def get_todos():
+    return await Todo_Pydantic.from_queryset(Todo.all())
+
+@app.get("/todos/{todo_id}", response_model=Todo_Pydantic, responses={404: {"model": HTTPNotFoundError}})
+async def get_todo(todo_id: int):
+    return await Todo_Pydantic.from_queryset_single(Todo.get(id = todo_id))
 
 
 @app.post("/todos", response_model=Todo_Pydantic)
