@@ -6,9 +6,18 @@ from pydantic import BaseModel
 from http.client import HTTPException
 
 from tortoise.contrib.fastapi import HTTPNotFoundError, register_tortoise
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Replace with your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def read_root():

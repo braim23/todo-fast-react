@@ -7,12 +7,13 @@ const TodoForm = ({ onFormSubmit }) => {
 
   const onFinish = () => {
     onFormSubmit({
-      title: form.getfieldValue("title"),
+      title: form.getFieldValue("title"), // Corrected here
       completed: false,
     });
-    console.log(form.getFieldValue("title"));
+    console.log(form.getFieldValue("title")); // Optional logging
     form.resetFields();
   };
+
   return (
     <Form
       form={form}
