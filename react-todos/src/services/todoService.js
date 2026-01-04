@@ -1,5 +1,7 @@
 import { jsx } from "react/jsx-runtime";
 
+console.log("API URL:MEOW", process.env.REACT_APP_API_URL);
+
 const baseUrl = `${process.env.REACT_APP_API_URL}/todos`;
 
 export const loadTodos = () =>{
@@ -45,3 +47,9 @@ export const deleteTodo = (id) => {
         method: "DELETE",
     }).then(res => res.json());
 }
+
+export const deleteCompletedTodos = () => {
+  return fetch(`${baseUrl}/completed`, {
+    method: "DELETE",
+  }).then((res) => res.json());
+};

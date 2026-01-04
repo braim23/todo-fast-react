@@ -4,6 +4,8 @@ import "./TodoList.css";
 import TodoTab from "./TodoTab";
 import TodoForm from "./TodoForm";
 import { createTodo, deleteTodo, loadTodos, updateTodo } from "../services/todoService";
+import { Button, Popconfirm } from "antd";
+import { deleteCompletedTodos } from "../services/todoService";
 
 const { Content } = Layout;
 
@@ -12,6 +14,9 @@ const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [activeTodos, setActiveTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
+
+
+
 
   const handleFormSubmit = (todo) => {
     console.log("Todo to create", todo);
@@ -28,6 +33,13 @@ const TodoList = () => {
     todo.completed = !todo.completed;
     updateTodo(todo).then(() => onRefresh());
     message.info("Todo status updated!");
+  };
+  
+  
+  const handleClearCompleted = async () => {
+    await deleteCompletedTodos();
+    message.success("Completed todos cleared!");
+    onRefresh();
   };
 
   const refresh = () => {
@@ -85,9 +97,23 @@ const TodoList = () => {
         <div className="todolist">
           <Row>
             <Col span={14} offset={5}>
-              <h1>Braim's To-do's</h1>
+              <h1>What am I doing today?</h1>
               <TodoForm onFormSubmit={handleFormSubmit} />
               <br />
+              {completedTodos.length > 0 && (
+                  <Popconfirm
+                    title="Clear completed todos?"
+                    description="This action cannot be undone."
+                    okText="Yes"
+                    cancelText="No"
+                    onConfirm={handleClearCompleted}
+                  >
+                    <Button danger style={{ marginBottom: 16 }}>
+                      Clear completed
+                    </Button>
+                  </Popconfirm>
+                )}
+
               <Tabs defaultActiveKey="all" items={tabsItems} />
             </Col>
           </Row>

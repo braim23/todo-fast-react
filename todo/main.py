@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Replace with your frontend URL
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],  # Replace with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,13 +45,21 @@ async def update_todo(todo_id: int, todo: TodoIn_Pydantic):
     await Todo.filter(id=todo_id).update(**todo.dict(exclude={"id"}, exclude_unset=True))
     return await Todo_Pydantic.from_queryset_single(Todo.get(id=todo_id))
 
+
+@app.delete("/todos/completed", response_model=Status)
+async def delete_completed_todos():
+    deleted_count = await Todo.filter(completed=True).delete()
+    return Status(message=f"Deleted {deleted_count} completed todos")
+
+
+
+
 @app.delete("/todos/{todo_id}", response_model=Status, responses={404: {"model":HTTPNotFoundError}})
 async def delete_todo(todo_id: int):
     delete_count = await Todo.filter(id=todo_id).delete()
     if not delete_count:
         raise HTTPException(status_code=404, detail=f"Todo {todo_id} not found")
     return Status(message=f"Deleted todo {todo_id}")
-    
     
 
 
